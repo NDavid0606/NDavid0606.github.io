@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="start()">start</button>
+    <script type="text/javascript">
+        var lis = [];
+        let d;
+
+        function start() {
+            for (let i = 0; i < 10; i++) {
+                lis.push(new createObject(Math.random() * 530, Math.random() * 350, 30, Math.random() * 20 + 1, Math.random() * 20 + 1));
+            }
+            game.start();
+        }
+
+        var game = {
+            cnv : document.createElement("canvas"),
+            start : function() {
+                this.cnv.width = 600;
+                this.cnv.height = 400;
+                this.context = this.cnv.getContext("2d");
+                document.body.insertBefore(this.cnv, document.body.childNodes[0]);
+                for (let p in lis) {
+                    lis[p].vy = Math.random() * 20 +1;
+                }
+                this.interval = setInterval(upd, 20);
+            },
+            stop : function() {
+                clearInterval(this.interval);
+            },
+            clear : function() {
+                this.context.clearRect(0, 0, this.cnv.width, this.cnv.height);
+            }
+        }
+
+        function createObject(x, y, r, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.vx = vx;
+            this.vy = vy;
+            this.move = function() {
+                    var ctx = game.context;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    this.x += this.vx;
+                    this.y += Math.round(this.vy);
+                    this.maxX();
+                    this.maxY();
+            }
+            this.maxY = function() {
+                if (this.y >= 370) {
+                    this.vy = Math.round(-this.vy);
+                }
+                if (this.y <= 40) {
+                    this.vy = Math.round(-this.vy);
+                }
+            }
+            this.maxX = function() {
+                if (this.x <= 40) {
+                    this.vx = Math.round(-this.vx);
+                }
+                if (this.x >= 570) {
+                    this.vx = Math.round(-this.vx);
+                }
+            }
+        }
+
+        let crs = 0;
+
+        function upd() {
+            game.clear();
+            for (let o in lis) {
+                lis[o].move();
+            }
+        }
+    </script>
+    <style>
+        canvas {
+            border: 2px solid black;
+            background-color: white;
+        }
+        
+        p {
+            display: inline;
+        }
+
+        body {
+            background-color: red;
+        }
+    </style>
+</body>
+</html>
